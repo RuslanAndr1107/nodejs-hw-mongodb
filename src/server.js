@@ -47,6 +47,17 @@ export const startServer = () => {
     });
   });
 
+  app.post('/contacts', async (req, res) => {
+    console.log(req.body);
+    const data = await contactServices.postContact(req.body);
+
+    res.json({
+      status: 200,
+      message: 'Successfully found contacts',
+      data
+    });
+  });
+
   app.use((req, res) => {
     res.status(404).json({
       message: `${req.url} not found`,
