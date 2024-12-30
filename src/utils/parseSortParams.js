@@ -1,5 +1,3 @@
-
-
 import { SORT_ORDER } from '../constants/index.js';
 
 const parseSortOrder = (sortOrder) => {
@@ -9,7 +7,7 @@ const parseSortOrder = (sortOrder) => {
 };
 
 const parseSortBy = (sortBy) => {
-  const keysOfContact = ['_id', 'name',"phoneNumber"];
+  const keysOfContact = ['_id', 'name'];
 
   if (keysOfContact.includes(sortBy)) {
     return sortBy;
