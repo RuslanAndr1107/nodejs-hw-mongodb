@@ -1,36 +1,63 @@
 import { Router } from 'express';
-
-import * as authControllers from '../controllers/auth.js';
-
-import ctrlWrapper from '../utils/ctrlWrapper.js';
-import validateBody from '../middlewares/validateBody.js';
-
+import { validateBody } from '../middlewares/validateBody.js';
 import {
-  userRegisterSchema,
-  userLoginSchema,
-
+  loginUserSchema,
+  // loginWithGoogleOAuthSchema,
+  registerUserSchema,
+  requestResetEmailSchema,
+  resetPasswordSchema,
 } from '../validation/auth.js';
-
-
-
+import ctrlWrapper from '../utils/ctrlWrapper.js';
+import {
+  // getGoogleOAuthUrlController,
+  loginUserController,
+  // loginWithGoogleController,
+  logoutUserController,
+  refreshUserSessionController,
+  registerUserController,
+  requestResetTokenController,
+  resetPasswordController,
+} from '../controllers/auth.js';
 
 const authRouter = Router();
+authRouter.post(
+  '/send-reset-email',
+  validateBody(requestResetEmailSchema),
+  ctrlWrapper(requestResetTokenController),
+);
+authRouter.post(
+  '/reset-password',
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(resetPasswordController),
+);
+
+
+// authRouter.get('/get-oauth-url', ctrlWrapper(getGoogleOAuthUrlController));
+// authRouter.post(
+//   '/confirm-google-auth',
+//   validateBody(loginWithGoogleOAuthSchema),
+//   ctrlWrapper(loginWithGoogleController),
+// );
+
 
 authRouter.post(
   '/register',
-  validateBody(userRegisterSchema),
-  ctrlWrapper(authControllers.registerController),
+  validateBody(registerUserSchema),
+  ctrlWrapper(registerUserController),
 );
-
 authRouter.post(
   '/login',
-  validateBody(userLoginSchema),
-  ctrlWrapper(authControllers.loginController),
+  validateBody(loginUserSchema),
+  ctrlWrapper(loginUserController),
 );
+authRouter.post(
+  '/logout',
 
+  ctrlWrapper(logoutUserController),
+);
+authRouter.post(
+  '/refresh',
 
-authRouter.post('/refresh', ctrlWrapper(authControllers.refreshController));
-
-authRouter.post('/logout', ctrlWrapper(authControllers.logoutController));
-
+  ctrlWrapper(refreshUserSessionController),
+);
 export default authRouter;

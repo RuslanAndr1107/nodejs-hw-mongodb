@@ -1,7 +1,5 @@
 import { Schema, model } from 'mongoose';
-
 import { handleSaveError, setUpdateOptions } from './hooks.js';
-
 
 const sessionsSchema = new Schema(
   {
@@ -13,11 +11,11 @@ const sessionsSchema = new Schema(
     accessToken: {
       type: String,
       required: true,
-    },
+        },
     refreshToken: {
       type: String,
       required: true,
-    },
+          },
     accessTokenValidUntil: {
       type: Date,
       required: true,
@@ -31,10 +29,11 @@ const sessionsSchema = new Schema(
 );
 
 sessionsSchema.post('save', handleSaveError);
-
 sessionsSchema.pre('findOneAndUpdate', setUpdateOptions);
-
 sessionsSchema.post('findOneAndUpdate', handleSaveError);
+
+// Додайте індекс на userId для підвищення продуктивності запитів
+sessionsSchema.index({ userId: 1 });
 
 const SessionsCollection = model('sessions', sessionsSchema);
 

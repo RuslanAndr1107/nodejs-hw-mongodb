@@ -1,21 +1,25 @@
 import { Schema, model } from 'mongoose';
 import { handleSaveError, setUpdateOptions } from './hooks.js';
 
-
-
-
 const contactSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, 'Name is required'],
+      trim: true,
     },
     phoneNumber: {
-      type: Number,
-      required: true,
+      type: String,
+      required: [true, 'Phone number is required'],
     },
     email: {
       type: String,
+      validate: {
+        validator: function (v) {
+          return /^\S+@\S+\.\S+$/.test(v);
+        },
+        message: (props) => `${props.value} is not a valid email!`,
+      },
     },
     isFavourite: {
       type: Boolean,
@@ -27,24 +31,27 @@ const contactSchema = new Schema(
       enum: ['work', 'home', 'personal'],
       default: 'personal',
     },
-    // parentId:{type: Schema.Types.ObjectId, ref:'contacts'},
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'users',
       required: true,
-
-    }
+    },
+    photo: {
+      type: String,
+          },
   },
   {
     timestamps: true,
     versionKey: false,
   },
 );
+
 contactSchema.post('save', handleSaveError);
-
 contactSchema.pre('findOneAndUpdate', setUpdateOptions);
-
 contactSchema.post('findOneAndUpdate', handleSaveError);
+
+// Додаємо індекси для полів, які часто використовуються для пошуку
+contactSchema.index({ userId: 1, isFavourite: 1 });
 
 const ContactsCollection = model('contacts', contactSchema);
 
@@ -56,6 +63,7 @@ export const sortFields = [
   'contactType',
   'createdAt',
   'updatedAt',
+  'photo',
 ];
 
 export default ContactsCollection;
