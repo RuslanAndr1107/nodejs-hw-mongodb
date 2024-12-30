@@ -22,7 +22,7 @@ export const startServer = () => {
 
   app.use(errorHandler);
 
-  const port = Number(env('PORT', 5003));
+  const port = Number(env('PORT', 10000));
 
-  app.listen(port, () => console.log('Server running on port 5003'));
+  app.listen(port, () => console.log('Server running on port 10000'));
 };
