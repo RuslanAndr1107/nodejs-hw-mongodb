@@ -1,7 +1,7 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
+const { Schema, model, models } = mongoose;
 
 import { handleSaveError, setUpdateOptions } from './hooks.js';
-
 
 const sessionsSchema = new Schema(
   {
@@ -36,6 +36,6 @@ sessionsSchema.pre('findOneAndUpdate', setUpdateOptions);
 
 sessionsSchema.post('findOneAndUpdate', handleSaveError);
 
-const SessionsCollection = model('sessions', sessionsSchema);
+const SessionsCollection = models.sessions || model('sessions', sessionsSchema);
 
 export default SessionsCollection;
