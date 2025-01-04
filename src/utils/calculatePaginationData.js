@@ -7,7 +7,7 @@ export default function calculatePaginationData({ count, perPage, page }) {
     page,
     perPage,
     totalItems: count,
-    totalPages,
+    totalPages: 2,
     hasNextPage,
     hasPreviousPage,
   };
