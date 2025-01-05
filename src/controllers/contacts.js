@@ -14,23 +14,34 @@ export const getAllContactsController = async (req, res, next) => {
     const { sortBy, sortOrder } = parseSortParams({ ...req.query, sortFields });
     const filter = parseContactFilterParams(req.query);
 
-    const contacts = await contactServices.getAllContacts({
+    const { data: contacts, totalItems } = await contactServices.getAllContacts({
       perPage,
       page,
       sortBy,
       sortOrder,
       filter,
     });
-
+    const totalPages = Math.ceil(totalItems / perPage);
+    const hasPreviousPage = page > 1;
+    const hasNextPage = page < totalPages;
     res.json({
       status: 200,
       message: 'Successfully found contacts',
-      data: contacts,
+      data: {
+        data: contacts,
+        page,
+        perPage,
+        totalItems:count,
+        totalPages,
+        hasPreviousPage,
+        hasNextPage,
+      },
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 export const getContactByIdController = async (req, res) => {
   const { id } = req.params;

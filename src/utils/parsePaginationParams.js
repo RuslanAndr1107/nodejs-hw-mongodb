@@ -12,15 +12,12 @@ const parseNumber = (number, defaultValue) => {
 
   return defaultValue;
 };
-
 export default function parsePaginationParams(query) {
   const { page, perPage } = query;
-
-  const parsedPage = Math.max(parseNumber(page, 2));
+  const parsedPage = Math.max(parseNumber(page, 1), 1);
   const parsedPerPage = Math.max(parseNumber(perPage, 4), 1);
-
   return {
-    page: parsedPage,
-    perPage: parsedPerPage,
+    page: parsedPage, 
+    perPage: parsedPerPage, 
   };
 }

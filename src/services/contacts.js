@@ -13,6 +13,7 @@ export const getAllContacts = async ({
 
   const contactsQuery = ContactsCollection.find();
 
+  // Додавання фільтрації
   if (filter.isFavourite !== undefined) {
     contactsQuery.where('isFavourite').equals(filter.isFavourite);
   }
@@ -21,15 +22,17 @@ export const getAllContacts = async ({
     contactsQuery.where('contactType').equals(filter.contactType);
   }
 
-  const [contactsCount, contacts] = await Promise.all([
-    ContactsCollection.find().merge(contactsQuery).countDocuments(),
-    contactsQuery
-      .skip(skip)
-      .limit(perPage)
-      .sort({ [sortBy]: sortOrder })
-      .exec(),
-  ]);
+  // Запит для отримання кількості контактів
+  const contactsCount = await ContactsCollection.countDocuments(contactsQuery.getFilter());
 
+  // Запит для отримання контактів із пагінацією
+  const contacts = await contactsQuery
+    .skip(skip)
+    .limit(perPage)
+    .sort({ [sortBy]: sortOrder })
+    .exec();
+
+  // Розрахунок пагінаційних даних
   const paginationData = calculatePaginationData(contactsCount, perPage, page);
 
   return {
@@ -37,6 +40,7 @@ export const getAllContacts = async ({
     ...paginationData,
   };
 };
+
 
 export const getContactById = async (id) => {
   return ContactsCollection.findById(id);
