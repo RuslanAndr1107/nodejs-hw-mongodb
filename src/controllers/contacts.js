@@ -31,7 +31,7 @@ export const getAllContactsController = async (req, res, next) => {
         data: contacts,
         page,
         perPage,
-        totalItems:count,
+        totalItems,
         totalPages,
         hasPreviousPage,
         hasNextPage,

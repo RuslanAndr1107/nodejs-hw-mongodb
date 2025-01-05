@@ -22,8 +22,7 @@ export const getAllContacts = async ({
     contactsQuery.where('contactType').equals(filter.contactType);
   }
 
-  // Запит для отримання кількості контактів
-  const contactsCount = await ContactsCollection.countDocuments(contactsQuery.getFilter());
+ 
 
   // Запит для отримання контактів із пагінацією
   const contacts = await contactsQuery
@@ -31,6 +30,8 @@ export const getAllContacts = async ({
     .limit(perPage)
     .sort({ [sortBy]: sortOrder })
     .exec();
+  // Запит для отримання кількості контактів
+  const contactsCount = contacts.length;
 
   // Розрахунок пагінаційних даних
   const paginationData = calculatePaginationData(contactsCount, perPage, page);
