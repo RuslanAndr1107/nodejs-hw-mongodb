@@ -14,51 +14,46 @@ import {
   updateContactSchema,
 } from '../validation/contacts.js';
 
-//import { checkRoles } from '../middlewares/checkRoles.js';
-
-
-// import { ROLES } from '../constants/index.js';
-
-
 const contactsRouter = Router();
 
 contactsRouter.use(authenticate);
 
 contactsRouter.get(
-  '/', //checkRoles(ROLES.TEACHER),
+  '/',
   ctrlWrapper(contactControllers.getAllContactsController),
 );
 
 contactsRouter.get(
-  '/:contactId', //checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  '/:contactId',
   isValidId,
   ctrlWrapper(contactControllers.getContactByIdController),
 );
 
 contactsRouter.post(
-  '/',//checkRoles(ROLES.TEACHER),
+  '/',
   validateBody(createContactchema),
   ctrlWrapper(contactControllers.createContactController),
 );
 
 contactsRouter.put(
-  '/:contactId', //checkRoles(ROLES.TEACHER),
+  '/:contactId',
   isValidId,
   validateBody(createContactchema),
   ctrlWrapper(contactControllers.upsertContactController),
 );
 
 contactsRouter.patch(
-  '/:contactId', //checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  '/:contactId',
   isValidId,
   validateBody(updateContactSchema),
   ctrlWrapper(contactControllers.patchContactController),
 );
 
 contactsRouter.delete(
-  '/:contactId', //checkRoles(ROLES.TEACHER),
+  '/:contactId', 
   isValidId,
   ctrlWrapper(contactControllers.deleteContactController),
 );
 
 export default contactsRouter;
+
