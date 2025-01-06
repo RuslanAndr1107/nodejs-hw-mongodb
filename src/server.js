@@ -3,7 +3,6 @@ import pinoHttp from 'pino-http';
 import pino from 'pino';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-// import ContactsRouter from './routers/contacts.js';
 import router from './routers/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
@@ -23,13 +22,13 @@ export const setupServer = () => {
   app.use(pinoHttp({ logger }));
   app.use(cookieParser());
 
-  app.use(router);
+  app.use('/', router); // Префікс для всіх маршрутів
 
-  app.use('*', notFoundHandler);
+  app.use('*', notFoundHandler); // Обробка необроблених маршрутів
 
-  app.use(errorHandler);
+  app.use(errorHandler); // Глобальний обробник помилок
 
   app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT}`);
+    logger.info(`Server is running on http://localhost:${PORT}`);
   });
 };
