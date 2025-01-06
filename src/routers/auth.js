@@ -30,16 +30,6 @@ authRouter.post(
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPasswordController),
 );
-
-
-// authRouter.get('/get-oauth-url', ctrlWrapper(getGoogleOAuthUrlController));
-// authRouter.post(
-//   '/confirm-google-auth',
-//   validateBody(loginWithGoogleOAuthSchema),
-//   ctrlWrapper(loginWithGoogleController),
-// );
-
-
 authRouter.post(
   '/register',
   validateBody(registerUserSchema),
