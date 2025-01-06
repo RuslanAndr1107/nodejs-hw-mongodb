@@ -33,17 +33,16 @@ export const getAllContcats = async ({
   const paginationData = calculatePaginationData(contactsCount, perPage, page);
   return { data: contacts, ...paginationData };
 };
-
-export const getContactById = (contactId, userId) =>
-  ContactsColection.findOne({ _id: contactId, userId });
+export const getContactByUserId = ( userId) =>
+  ContactsColection.find({ userId });
 
 export const postContact = (contactData) =>
   ContactsColection.create(contactData);
 
-export const patchContact = (contactId, userId, contactData) =>
-  ContactsColection.findOneAndUpdate({ _id: contactId, userId }, contactData, {
+export const patchContact = (contactId, contactData) =>
+  ContactsColection.findOneAndUpdate({ _id: contactId }, contactData, {
     new: true,
   });
 
-export const deleteContact = (contactId, userId) =>
-  ContactsColection.findOneAndDelete({ _id: contactId, userId });
+export const deleteContact = (contactId) =>
+  ContactsColection.findOneAndDelete({ _id: contactId });

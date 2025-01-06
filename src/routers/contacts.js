@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import express from 'express';
 import {
+  getContactByUserIdController,
   createContactController,
   deleteContactController,
-  getContactByIdController,
   getContactsController,
   updateContactController,
 } from '../controllers/contacts.js';
@@ -18,9 +18,7 @@ import { isValidId } from '../middlewares/isValidId.js';
 import { validateBody } from '../middlewares/validateBody.js';
 
 import { authenticate } from '../middlewares/authenticate.js';
-// import { checkRoles } from '../middlewares/checkRoles.js';
-// import { ROLES } from '../constants/constants.js';
-// console.log(checkRoles(ROLES.ADMIN, ROLES.USER));
+
 
 const jsonParser = express.json();
 const router = Router();
@@ -29,10 +27,10 @@ router.use(authenticate);
 router.get('/', authenticate, ctrlWrapper(getContactsController));
 
 router.get(
-  '/:contactId',
+  '/user/:id',
   authenticate,
   isValidId,
-  ctrlWrapper(getContactByIdController),
+  ctrlWrapper(getContactByUserIdController),
 );
 
 router.post(
@@ -44,14 +42,14 @@ router.post(
 );
 
 router.delete(
-  '/:contactId',
+  '/:id',
   authenticate,
   isValidId,
   ctrlWrapper(deleteContactController),
 );
 
 router.patch(
-  '/:contactId',
+  '/:id',
   authenticate,
   isValidId,
   jsonParser,
