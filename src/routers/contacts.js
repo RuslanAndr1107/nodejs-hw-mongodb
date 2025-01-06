@@ -24,7 +24,7 @@ const jsonParser = express.json();
 const router = Router();
 
 router.use(authenticate);
-router.get('/', authenticate, ctrlWrapper(getContactsController));
+router.get('/', ctrlWrapper(getContactsController));
 
 router.get(
   '/user/:id',
