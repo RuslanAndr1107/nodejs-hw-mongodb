@@ -1,76 +1,41 @@
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshUsersSession,
+} from '../services/auth.js';
+import createHttpError from 'http-errors';
+import { THIRTY_DAYS } from '../constants/constants.js';
 
-import * as authServices from '../services/auth.js';
+export const registerUserController = async (req, res) => {
+  const payload = {
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+  };
+  const registeredUser = await registerUser(payload);
 
+  res.status(201).send({
+    status: 201,
+    message: 'Successfully registered a user!',
+    data: registeredUser,
+  });
+};
 
-
-const setupSession = (res, session) => {
-  console.log('session.refreshTokenValidUntil:', session.refreshTokenValidUntil);
-
-  // Перевірте, чи є session.refreshTokenValidUntil числом або об'єктом Date
-  let expires;
-  if (typeof session.refreshTokenValidUntil === 'number') {
-    expires = new Date(Date.now() + session.refreshTokenValidUntil);
-  } else if (session.refreshTokenValidUntil instanceof Date) {
-    expires = session.refreshTokenValidUntil;
-  } else {
-    throw new Error('Invalid type for refreshTokenValidUntil');
-  }
-
-  console.log('Calculated expiration date:', expires);
-
-  if (isNaN(expires.getTime())) {
-    throw new Error('Invalid expiration date');
-  }
+export const loginUserController = async (req, res) => {
+  const session = await loginUser(req.body);
 
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expires: expires,
+    expires: new Date(Date.now() + THIRTY_DAYS),
   });
 
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expires: expires,
-  });
-};
-export const refreshController = async (req, res) => {
-
-  const session = await authServices.refreshSession({
-     sessionId: req.cookies.sessionId,
-     refreshToken: req.cookies.refreshToken
-
+    expires: new Date(Date.now() + THIRTY_DAYS),
   });
 
-  setupSession(res, session);
-
-  res.json({
-    status: 200,
-    message: 'Successfully refreshed a session',
-    data: {
-      accessToken: session.accessToken,
-    },
-  });
-};
-
-
-
-export const registerController = async (req, res) => {
-  const newUser = await authServices.register(req.body);
-
-  res.status(201).json({
-    status: 201,
-    message: 'Successfully registered a user',
-    data: newUser,
-  });
-};
-
-export const loginController = async (req, res) => {
-  console.log('Login attempt:', req.body);
-  const session = await authServices.login(req.body);
-
-
-  setupSession(res, session);
-
-  res.json({
+  res.status(200).send({
     status: 200,
     message: 'Successfully logged in an user!',
     data: {
@@ -79,16 +44,45 @@ export const loginController = async (req, res) => {
   });
 };
 
+export const logoutUserController = async (req, res) => {
+  const { sessionId, refreshToken } = req.cookies;
 
-export const logoutController = async (req, res) => {
+  if (!sessionId && !refreshToken)
+    throw createHttpError(401, 'Session not found');
 
-  if (req.cookies.sessionId) {
-    await authServices.logout(req.cookies.sessionId);
-  }
+  await logoutUser(sessionId, refreshToken);
 
   res.clearCookie('sessionId');
   res.clearCookie('refreshToken');
 
-  res.status(204).send();
+  res.status(204).end();
 };
 
+const setupSession = (res, session) => {
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + THIRTY_DAYS),
+  });
+
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + THIRTY_DAYS),
+  });
+};
+
+export const refreshUserSessionController = async (req, res) => {
+  const session = await refreshUsersSession({
+    sessionId: req.cookies.sessionId,
+    refreshToken: req.cookies.refreshToken,
+  });
+
+  setupSession(res, session);
+
+  res.send({
+    status: 200,
+    message: 'Successfully refreshed a session!',
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
+};

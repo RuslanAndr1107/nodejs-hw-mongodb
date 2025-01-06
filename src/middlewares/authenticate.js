@@ -1,48 +1,55 @@
 import createHttpError from 'http-errors';
-import SessionsCollection from '../db/models/session.js';
-import UsersCollection from '../db/models/user.js';
+
+import { Session } from '../db/models/session.js';
+import { User } from '../db/models/user.js';
 
 export const authenticate = async (req, res, next) => {
   const authHeader = req.get('Authorization');
 
   if (!authHeader) {
-    console.log('Authorization header not provided');
-    return next(createHttpError(401, 'Please provide Authorization header'));
+    next(createHttpError(401, 'The authorization header is missing'));
+    return;
   }
 
   const bearer = authHeader.split(' ')[0];
   const token = authHeader.split(' ')[1];
 
   if (bearer !== 'Bearer' || !token) {
-    console.log('Auth header is not valid');
-    return next(createHttpError(401, 'Auth header should be of type Bearer'));
+    next(createHttpError(401, 'Auth header should be of type Bearer'));
+    return;
   }
 
-  const session = await SessionsCollection.findOne({ accessToken: token });
-  console.log('Session found:', session);
+  const session = await Session.findOne({
+    accessToken: token,
+  });
 
-  if (!session) {
-    console.log('No session found for token:', token);
-    return next(createHttpError(401, 'Session not found'));
+  console.log(session);
+  if (!session || !session.isActive) {
+    next(createHttpError(401, 'Session is no longer active or not found'));
+    return;
   }
 
-  const isAccessTokenExpired = new Date() > new Date(session.accessTokenValidUntil);
+  // if (!session) {
+  //   next(createHttpError(401, 'Session not found'));
+  //   return;
+  // }
+
+  const isAccessTokenExpired =
+    new Date() > new Date(session.accessTokenValidUntil);
 
   if (isAccessTokenExpired) {
-    console.log('Access token expired for token:', token);
-    return next(createHttpError(401, 'Access token expired'));
+    next(createHttpError(401, 'Access token expired'));
+    return;
   }
 
-  const user = await UsersCollection.findById(session.userId);
+  const user = await User.findById(session.userId);
 
   if (!user) {
-    console.log('User not found for session:', session._id);
-    return next(createHttpError(401));
+    next(createHttpError(401, 'User not found'));
+    return;
   }
 
   req.user = user;
+
   next();
 };
-
-
-

@@ -1,13 +1,7 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { ROLES } from '../../constants/constants.js';
 
-const { model, Schema, models } = mongoose;
-
-
-
-import { emailRegexp } from '../../constants/users.js';
-import { handleSaveError, setUpdateOptions } from './hooks.js';
-
-const userSchema = new Schema(
+const UserSchema = new Schema(
   {
     name: {
       type: String,
@@ -16,30 +10,31 @@ const userSchema = new Schema(
     email: {
       type: String,
       unique: true,
-      match: emailRegexp,
       required: true,
     },
     password: {
       type: String,
       required: true,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    role: {
+      type: String,
+      enum: [ROLES.USER],
+      default: ROLES.USER,
     },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
-
   },
   { timestamps: true, versionKey: false },
 );
 
-const User = models.User || model('User', userSchema);
+UserSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
-userSchema.post('save', handleSaveError);
-userSchema.pre('findOneAndUpdate', setUpdateOptions);
-userSchema.post('findOneAndUpdate', handleSaveError);
+export const User = model('users', UserSchema);
 
-export default User;
+//  role: {
+//       type: String,
+//       enum: [ROLES.ADMIN, ROLES.USER],
+//       default: ROLES.USER,
+//     },
