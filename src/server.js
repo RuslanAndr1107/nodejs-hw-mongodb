@@ -1,51 +1,104 @@
-import express from 'express';
-import pino from 'pino-http';
-import cors from 'cors';
-import { env } from './utils/env.js';
-import dotenv from 'dotenv';
+// import express from "express";
+// import pino from "pino-http";
+// import cors from "cors";
+// import router from "./routers/index.js";
+// import { notFoundHandler } from "./middlewares/notFoundHandler.js";
+// import { errorHandler } from "./middlewares/errorHandler.js";
+// import cookieParser from "cookie-parser";
+// import { getEnvVar } from "./utils/getEnvVar.js";
+// import { UPLOAD_DIR } from "./constants/index.js";
+// import { swaggerDocs } from "./middlewares/swaggerDocs.js";
 
-import cookieParser from 'cookie-parser';
+// const PORT = Number(getEnvVar("PORT", "3001"));
 
-import routers from './routers/index.js';
+// export const setupServer = () => {
+//   const app = express();
+//   app.use("/api-docs", swaggerDocs());
+//   app.use("/uploads", express.static(UPLOAD_DIR));
+//   app.use(express.json());
 
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
-import { errorHandlerMiddleware } from './middlewares/errorHandler.js';
-import { UPLOAD_DIR } from './constants/index.js';
-import { swaggerDocs } from './middlewares/swaggerDocs.js';
+//   app.use(cookieParser());
+//   app.use(
+//     cors({
+//       credentials: true,
+//     })
+//   );
+//   app.use(
+//     pino({
+//       transport: {
+//         target: "pino-pretty",
+//       },
+//     })
+//   );
 
+//   app.get("/", (req, res) => {
+//     res.json({
+//       message: "Hello World!",
+//     });
+//   });
 
-const PORT = Number(env('PORT', '3000'));
-export const startServer = () => {
+//   app.use(router);
+
+//   app.use("*", notFoundHandler);
+
+//   app.use(errorHandler);
+
+//   app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+//   });
+// };
+// // export const startServer = () => {
+// //   const app = express();
+
+// //   app.use("/uploads", express.static(UPLOAD_DIR));
+// //   app.use("/api-docs", swaggerDocs());
+// //   app.use(express.json());
+// //   app.use("/uploads", express.static(UPLOAD_DIR));
+// //   app.use(cookieParser());
+// //   app.use(
+// //     cors({
+// //       credentials: true,
+// //     })
+// //   );
+// // };
+import express from "express";
+import pino from "pino-http";
+import cors from "cors";
+import { getEnvVar } from "./utils/getEnvVar.js";
+import router from "./routers/index.js";
+import { notFoundHandler } from "./middlewares/notFoundHandler.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import cookieParser from "cookie-parser";
+import { UPLOAD_DIR } from "./constants/index.js";
+import { swaggerDocs } from "./middlewares/swaggerDocs.js";
+
+const PORT = Number(getEnvVar("PORT", "3001"));
+
+export const setupServer = () => {
   const app = express();
 
+  app.use("/uploads", express.static(UPLOAD_DIR));
+  app.use("/api-docs", swaggerDocs());
+
   app.use(express.json());
-  const corsOptions = {
-    // origin: 'http://localhost:3000', // Домен твого фронтенду на Vercel
-    credentials: true,
-  };
-  app.use(cors(corsOptions));
+
+  app.use(cors());
 
   app.use(cookieParser());
 
   app.use(
     pino({
       transport: {
-        target: 'pino-pretty',
+        target: "pino-pretty",
       },
-    }),
+    })
   );
-  dotenv.config({ path: './.env' });
 
-  app.get('/', (req, res) => {
-    res.json({
-      message: 'Please enter /contacts for url! Thanks',
-    });
-  });
-  app.use('/uploads', express.static(UPLOAD_DIR));
-  app.use('/api-docs', swaggerDocs());
-  app.use(routers);
-  app.use('*', notFoundHandler);
-  app.use(errorHandlerMiddleware);
+  app.use(router);
+
+  app.use("*", notFoundHandler);
+
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

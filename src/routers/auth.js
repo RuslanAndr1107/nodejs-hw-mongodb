@@ -1,13 +1,13 @@
-import { Router } from 'express';
-import { validateBody } from '../middlewares/validateBody.js';
+import { Router } from "express";
+import { validateBody } from "../middlewares/validateBody.js";
 import {
   loginUserSchema,
   loginWithGoogleOAuthSchema,
   registerUserSchema,
   requestResetEmailSchema,
   resetPasswordSchema,
-} from '../validation/auth.js';
-import ctrlWrapper from '../utils/ctrlWrapper.js';
+} from "../validation/auth.js";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import {
   getGoogleOAuthUrlController,
   loginUserController,
@@ -15,45 +15,45 @@ import {
   logoutUserController,
   refreshUserSessionController,
   registerUserController,
-  requestResetTokenController,
+  requestResetEmailController,
   resetPasswordController,
-} from '../controllers/auth.js';
+} from "../controllers/auth.js";
 
-const authRouter = Router();
-authRouter.post(
-  '/send-reset-email',
-  validateBody(requestResetEmailSchema),
-  ctrlWrapper(requestResetTokenController),
-);
-authRouter.post(
-  '/reset-password',
-  validateBody(resetPasswordSchema),
-  ctrlWrapper(resetPasswordController),
-);
-authRouter.get('/get-oauth-url', ctrlWrapper(getGoogleOAuthUrlController));
-authRouter.post(
-  '/confirm-google-auth',
-  validateBody(loginWithGoogleOAuthSchema),
-  ctrlWrapper(loginWithGoogleController),
-);
-authRouter.post(
-  '/register',
+const router = Router();
+
+router.post(
+  "/register",
   validateBody(registerUserSchema),
-  ctrlWrapper(registerUserController),
+  ctrlWrapper(registerUserController)
 );
-authRouter.post(
-  '/login',
+
+router.post(
+  "/login",
   validateBody(loginUserSchema),
-  ctrlWrapper(loginUserController),
+  ctrlWrapper(loginUserController)
 );
-authRouter.post(
-  '/logout',
 
-  ctrlWrapper(logoutUserController),
-);
-authRouter.post(
-  '/refresh',
+router.post("/logout", ctrlWrapper(logoutUserController));
 
-  ctrlWrapper(refreshUserSessionController),
+router.post("/refresh", ctrlWrapper(refreshUserSessionController));
+
+router.post(
+  "/send-reset-email",
+  validateBody(requestResetEmailSchema),
+  ctrlWrapper(requestResetEmailController)
 );
-export default authRouter;
+
+router.post(
+  "/reset-pwd",
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(resetPasswordController)
+);
+export default router;
+
+router.get("/get-oauth-url", ctrlWrapper(getGoogleOAuthUrlController));
+
+router.post(
+  "/confirm-oauth",
+  validateBody(loginWithGoogleOAuthSchema),
+  ctrlWrapper(loginWithGoogleController)
+);

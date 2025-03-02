@@ -1,13 +1,9 @@
 {
-    "web": {
-      "client_id": "GOOGLE_AUTH_CLIENT_ID",
-      "project_id": "PROJECT_ID",
-      "auth_uri": "AUTH_URI",
-      "token_uri": "TOKEN_URI",
-      "auth_provider_x509_cert_url": "AUTH_PROVIDER_X509_CERT_URL",
-      "client_secret": "GOOGLE_AUTH_CLIENT_SECRET",
-      "redirect_uris": [
-        "GOOGLE_AUTH_REDIRECT_URI"
-      ]
-    }
+  "web": {
+    "project_id": "contacts-app-451816",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "redirect_uris": ["http://localhost:3001/confirm-google-auth"]
   }
+}

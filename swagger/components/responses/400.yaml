@@ -1,4 +1,4 @@
-description: Bad request
+description: Bad Request
 content:
   application/json:
     schema:
@@ -13,7 +13,7 @@ content:
           example: 400
         message:
           type: string
-          example: Bad request
+          example: BadRequestError
         data:
           type: object
           required:
@@ -21,4 +21,4 @@ content:
           properties:
             message:
               type: string
-              example: 'Name is required'
+              example: "Invalid input data"

@@ -1,48 +1,49 @@
 tags:
   - Contacts
-summary: Create a new contact
+summary: Create contact
 operationId: createContact
-description: 'Create a new contact in the database'
+description: "Create a contact with payload"
 security:
   - bearerAuth: []
 requestBody:
-  required: true
   content:
     multipart/form-data:
       schema:
         type: object
+        required:
+          - name
+          - phoneNumber
+          - contactType
+          - isFavourite
         properties:
           name:
-            description: 'Contact name'
             type: string
-            example: 'Kateryna Povalenko'
-          phone:
-            description: 'Contact phone number'
+            description: Contact name.
+            example: "John Connor"
+          phoneNumber:
             type: string
-            example: '+380000000005'
+            description: Phone number.
+            example: "+380011100111"
           email:
-            description: 'Contact email'
             type: string
+            description: Email address.
+            example: "denys@skynet.mil"
           isFavourite:
-            description: 'Is the contact marked as favourite?'
             type: boolean
-            example: false
+            description: is favorite flag.
+            example: true
           contactType:
-            description: 'Type of the contact'
             type: string
-            enum: ['work', 'home', 'personal']
-            default: personal
-          userId:
-            description: 'User ID to which the contact belongs'
-            type: string
-            example: '65e4decdd286b30065d54af9'
+            description: contact type.
+            enum: [work, home, personal]
+            example: "personal"
           photo:
-            description: 'Link to contacts photo'
             type: string
-            example: 'https://res.cloudinary.com/uqwgdu/image/upload/image.png'
+            description: Contact's photo
+            format: binary
 responses:
-  '201':
-    description: Contact created successfully
+  "201":
+    description: Creates a contact
     content:
       application/json:
         schema:
@@ -57,11 +58,13 @@ responses:
               example: 201
             message:
               type: string
-              example: 'Contact successfully created!'
+              example: Successfully created a contact!
             data:
               type: object
-              $ref: '../../components/schemas/contact.yaml'
-  '401':
-    $ref: '../../components/responses/401.yaml'
-  '400':
-    $ref: '../../components/responses/400.yaml'
+              $ref: "../../components/schemas/contact.yaml"
+  "400":
+    $ref: "../../components/responses/400.yaml"
+  "401":
+    $ref: "../../components/responses/401.yaml"
+  "500":
+    $ref: "../../components/responses/500.yaml"
