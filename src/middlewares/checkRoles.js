@@ -1,13 +1,12 @@
 // import createHttpError from 'http-errors';
 
-// import  ContactsCollection  from '../db/models/contact.js';
+// import { ContactsCollection } from '../db/models/contact.js';
 // import { ROLES } from '../constants/index.js';
 
 // export const checkRoles =
 //   (...roles) =>
 //   async (req, res, next) => {
 //     const { user } = req;
-//     console.log(`User role: ${user}, Required roles: ${roles}`);// ghb
 //     if (!user) {
 //       next(createHttpError(401));
 //       return;
@@ -39,4 +38,3 @@
 
 //     next(createHttpError(403));
 //   };
-
