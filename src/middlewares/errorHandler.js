@@ -1,17 +1,16 @@
+import { HttpError } from 'http-errors';
 
-// eslint-disable-next-line no-unused-vars
-export default function errorHandler (err, req, res, _next) {
-  // Перевірка, чи отримали ми помилку від createHttpError
-  if (err.status && err.expose) {
-    res.status(err.status).json({
+export const errorHandler = (err, req, res, ) => {
+  if (err instanceof HttpError) {
+    res.status(err.status).send({
       status: err.status,
-      message: err.message || 'Error',
+      message: err.name,
       data: err,
     });
     return;
   }
 
-  res.status(500).json({
+  res.status(500).send({
     status: 500,
     message: 'Something went wrong',
     data: err.message,

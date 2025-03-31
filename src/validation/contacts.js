@@ -1,23 +1,28 @@
 import Joi from 'joi';
 
-import{phoneNumberRegexp, emailRegexp} from '../constants/contacts.js';
-
-export const createContactchema = Joi.object({
-  name: Joi.string().min(3).max(30).required(),
-  phoneNumber: Joi.string().pattern(phoneNumberRegexp).required(),
-  email: Joi.string().pattern(emailRegexp).optional(),
-  isFavourite: Joi.boolean().optional(),
-  contactType: Joi.string()
-    .valid('work', 'home', 'personal')
-    .default('personal')
-    .optional(),
-
+export const createContactSchema = Joi.object({
+  name: Joi.string().min(3).max(20).required().messages({
+    'string.base': 'Username should be a string',
+    'string.min': 'Username should have at least {#limit} characters',
+    'string.max': 'Username should have at most {#limit} characters',
+    'any.required': 'Username is required',
+  }),
+  phoneNumber: Joi.string().min(3).max(20).required(),
+  email: Joi.string().email().required(),
+  isFavourite: Joi.boolean(),
+  contactType: Joi.string().valid('work', 'home', 'personal').required(),
+  userId: Joi.string().required(),
 });
 
 export const updateContactSchema = Joi.object({
-  name: Joi.string().min(3).max(30).optional(),
-  phoneNumber: Joi.string().optional(),
-  email: Joi.string().email().optional(),
-  isFavourite: Joi.boolean().optional(),
-  contactType: Joi.string().valid('work', 'home', 'personal').optional(),
+  name: Joi.string().min(3).max(20).messages({
+    'string.base': 'Username should be a string',
+    'string.min': 'Username should have at least {#limit} characters',
+    'string.max': 'Username should have at most {#limit} characters'
+  }),
+  phoneNumber: Joi.string().min(3).max(20),
+  email: Joi.string().email(),
+  isFavourite: Joi.boolean(),
+  contactType: Joi.string().valid('work', 'home', 'personal'),
+  userId: Joi.string().equal(24),
 });
