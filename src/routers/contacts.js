@@ -1,64 +1,44 @@
-import { Router } from 'express';
-
-import * as contactControllers from '../controllers/contacts.js';
-
-import {authenticate} from '../middlewares/authenticate.js';
-
-import isValidId from '../middlewares/isValidId.js';
-
-import ctrlWrapper from '../utils/ctrlWrapper.js';
-import validateBody from '../middlewares/validateBody.js';
-
+import { Router } from "express";
 import {
- createContactchema,
+  createContactController,
+  deleteContactController,
+  getContactByIdController,
+  getContactsController,
+  patchContactController,
+} from "../controllers/contacts.js";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
+import { validateBody } from "../middlewares/validateBody.js";
+import {
+  createContactSchema,
   updateContactSchema,
-} from '../validation/contacts.js';
+} from "../validation/contacts.js";
+import { isValidId } from "../middlewares/isValidId.js";
+import { authenticate } from "../middlewares/authenticate.js";
+import { upload } from "../middlewares/multer.js";
 
-//import { checkRoles } from '../middlewares/checkRoles.js';
+const router = Router();
 
+router.use(authenticate);
 
-// import { ROLES } from '../constants/index.js';
+router.get("/", ctrlWrapper(getContactsController));
 
+router.get("/:contactId", isValidId, ctrlWrapper(getContactByIdController));
 
-const contactsRouter = Router();
-
-contactsRouter.use(authenticate);
-
-contactsRouter.get(
-  '/', //checkRoles(ROLES.TEACHER),
-  ctrlWrapper(contactControllers.getAllContactsController),
+router.post(
+  "/",
+  upload.single("photo"),
+  validateBody(createContactSchema),
+  ctrlWrapper(createContactController)
 );
 
-contactsRouter.get(
-  '/:contactId', //checkRoles(ROLES.TEACHER, ROLES.PARENT),
+router.patch(
+  "/:contactId",
   isValidId,
-  ctrlWrapper(contactControllers.getContactByIdController),
-);
-
-contactsRouter.post(
-  '/',//checkRoles(ROLES.TEACHER),
-  validateBody(createContactchema),
-  ctrlWrapper(contactControllers.createContactController),
-);
-
-contactsRouter.put(
-  '/:contactId', //checkRoles(ROLES.TEACHER),
-  isValidId,
-  validateBody(createContactchema),
-  ctrlWrapper(contactControllers.upsertContactController),
-);
-
-contactsRouter.patch(
-  '/:contactId', //checkRoles(ROLES.TEACHER, ROLES.PARENT),
-  isValidId,
+  upload.single("photo"),
   validateBody(updateContactSchema),
-  ctrlWrapper(contactControllers.patchContactController),
+  ctrlWrapper(patchContactController)
 );
 
-contactsRouter.delete(
-  '/:contactId', //checkRoles(ROLES.TEACHER),
-  isValidId,
-  ctrlWrapper(contactControllers.deleteContactController),
-);
+router.delete("/:contactId", isValidId, ctrlWrapper(deleteContactController));
 
-export default contactsRouter;
+export default router;
